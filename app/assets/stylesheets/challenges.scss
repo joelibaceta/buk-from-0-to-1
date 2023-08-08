@@ -1,0 +1,133 @@
+// Place all the styles related to the challenges controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$basic-blue: #BFEFFF;
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 25px;
+    height: 25px;
+    display: block;
+    border: 1px solid #ededed;
+    text-align: center;
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+.cell:hover {
+    background-color: #eee;
+}
+
+.cell:active {
+    background-color: #aaa;
+}
+
+[data-value="1"] {
+    background-color: $basic-blue;
+}
+
+[data-value="2"] {
+    background-color: darken( $basic-blue, 10% )
+}
+
+[data-value="3"] {
+    background-color: darken( $basic-blue, 20% )
+}
+
+[data-value="3"] {
+    background-color: darken( $basic-blue, 30% )
+}
+
+[data-value="4"] {
+    background-color: darken( $basic-blue, 40% )
+}
+
+#preview {
+    background-color: #222;
+  }
+
+.layout {
+    display: flex;
+    justify-content: space-around;
+}
+
+.sidebar {
+    text-align: center;
+    svg {  
+    }
+    p {
+        line-height: 45px;
+    }
+    a {
+        background-color: #6892bf;
+        color: white !important;
+        padding: 1em 1.5em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    .option-list {
+        div {
+            display: flex;
+            padding: 5px;
+        }
+    }
+    textarea {
+        font-size: 20px;
+        padding: 15px;
+    }
+}
+
+.option-list div{
+    display: flex;
+    margin: 5px;
+    align-items: center;
+
+}
+
+.subtitle {
+    font-size: 12px;
+    font-weight: 600; 
+}
+
+#player_item {
+    width: 25px;
+    height: 25px;
+    display: block;
+    background-color: #e688a1;
+}
+
+#goal_marker {
+    width: 25px;
+    height: 25px;
+    display: block;
+    background-color: #9cf196;
+}
+
+#bonus_point {
+    width: 25px;
+    height: 25px;
+    display: block;
+    background-color: #eceba7
+}
+
+#codeEditor {
+    display: flex;
+}
+#code-container {
+    height: 580px;
+    width: 30%;
+    margin: 0;
+}
+
+#description {
+    width: 100%;
+    border: 1px solid #aeaeae;
+}
+
+.play_link {
+    color: blue;
+}
