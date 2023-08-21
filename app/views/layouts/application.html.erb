@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BukFromZeroToOne</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <main class="flex h-screen">
+    <div class="w-1/5 bg-gray-200 p-8">
+      <!-- Instrucciones -->
+      <%= yield :instructions %>
+    </div>
+    <div class="w-2/5 bg-gray-300">
+      <!-- Juego -->
+      <%= yield :blockly %>
+    </div>
+    <div class="w-2/5 p-8 bg-black">
+      <!-- Juego -->
+      <%= yield :game %>
+    </div>
+    </main>
+  </body>
+</html>
