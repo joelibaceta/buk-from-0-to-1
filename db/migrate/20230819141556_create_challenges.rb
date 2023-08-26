@@ -5,7 +5,7 @@ class CreateChallenges < ActiveRecord::Migration[7.0]
       t.text :premise
       t.text :tasks
       t.text :notes
-
+      t.string :code
       t.timestamps
     end
   end

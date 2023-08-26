@@ -37,11 +37,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_015725) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "challenges", id: :string, force: :cascade do |t|
+  create_table "challenges", force: :cascade do |t|
     t.string "title"
     t.text "premise"
     t.text "tasks"
     t.text "notes"
+    t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "intro"

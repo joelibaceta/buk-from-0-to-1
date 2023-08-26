@@ -1,10 +1,352 @@
-<p style="color: green"><%= notice %></p>
 
-<%= render @challenge %>
+<% content_for :instructions do %>
+    <!-- Contenido de las instrucciones del reto -->
+    <div>
+        <h1 class="text-3xl mb-8"> <%= @challenge.title %> </h1>
+        <p class="my-4 text-sm"> <%= @challenge.intro %> </p>
+        <p class="my-4 text-sm"> <%= @challenge.premise %> </p>
+        <p class="my-4 text-sm"> <%= @challenge.tasks %> </p>
+        <p class="my-4 text-sm font-medium"> <%= @challenge.notes %> </p>
+    </div>
+<% end %>
 
-<div>
-  <%= link_to "Edit this challenge", edit_challenge_path(@challenge) %> |
-  <%= link_to "Back to challenges", challenges_path %>
+<% content_for :blockly do %>
+    <!-- Contenido del editor -->
+    <div id=editor_"<%= dom_id @challenge %>" class="flex flex-col">
+        <div id="blocklyDiv"
+            class="h-full w-full"
+            style="height: 60vh; width: 40vw;">
+            <a id="play-button"
+                class="bg-blue-500 text-white rounded-full p-4 shadow-md absolute bottom-4 right-4">
+                <svg class="h-6 w-6 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                </svg>
+            </a>
+        </div>
+        <pre id="code-container" class="p-8"><code id="generated-code" class="javascript language-javascript"></code></pre>
+        <div class="p-8 text-red bg-black" style="color: red; overflow: vertical;" id="debug-console">
+        </div>
+    </div>
+<% end %>
 
-  <%= button_to "Destroy this challenge", @challenge, method: :delete %>
-</div>
+<% content_for :game do %>
+    <!-- Contenido del juego -->
+    <div id="editor_<%= dom_id @challenge %>" style="height: 100%;">
+        <div id="gameDiv"
+            class="text-white"
+            style="height: 100%; overflow: hidden; display: flex; justify-content: center; background-image: url('/assets/background_space.png')">
+            <canvas
+                id="gameCanvas"
+                width="480" height="960">
+            </canvas>
+        </div>
+    </div>
+
+    <div 
+        class="flex justify-center items-center h-screen" 
+        id="congratz" 
+        style="
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        ">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+            <div class="text-2xl font-semibold mb-4">¡Felicidades, has ganado!</div>
+            <div class="text-4xl mb-6">🎉</div>
+            <p>Gracias por jugar.</p>
+        </div>
+    </div>
+
+    <%= render "toolbox" %>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+
+        var mapData = <%= raw @map.data() %>;
+
+        const tileSize = 16;
+
+        const resources = {};  
+
+        const imagePaths = [
+            '/assets/map2.png'
+            // Agrega más rutas de imágenes aquí si es necesario
+        ];
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        document.getElementById('play-button').addEventListener('click', async () => {
+            await play();
+        });
+
+        function loadResources(callback) {
+            let loadedCount = 0;
+
+            imagePaths.forEach((path) => {
+                const image = new Image();
+                image.src = path;
+                image.onload = () => {
+                    resources[path] = image;
+                    loadedCount++;
+
+                    if (loadedCount === imagePaths.length) {
+                        callback();
+                    }
+                };
+            });
+        }
+
+        function init() {
+            loadResources(() => {
+                imagePaths.forEach((path) => {
+                    drawImage(resources[path]);
+                });
+                
+                drawBoxesAtRandomPositions();
+                drawPlayerAtInitialPosition();
+            });
+        }
+
+        function reDraw() {
+            // Dibuja el mapa de nuevo
+            init();
+        }
+
+        function drawPlayerAtInitialPosition() {
+            // Dibuja al jugador en la posición inicial usando los datos de mapData (Objeto Player)
+            const imagePlayer = new Image();
+            imagePlayer.src = '/assets/astronaut.png';
+
+            const x = mapData.objects[0].x + mapData.objects[0].width/4 ;
+            const y = mapData.objects[0].y + mapData.objects[0].height/2;
+            const width = mapData.objects[0].width;
+            const height = mapData.objects[0].height;
+
+            imagePlayer.onload = () => {
+                context.drawImage(imagePlayer, x, y, width, height);
+            };
+
+        }
+
+        function drawBoxesAtRandomPositions() {
+            // Chequear si hay boxes creados 
+            if (mapData["boxes"].length == 0) {
+                // Crear boxes
+
+                // Dibuja las cajas en posiciones aleatorias en ubicaciones disponibles marcadas por Ground
+                const randomInt = (max, min) => Math.round(Math.random() * (max - min)) + min;
+                ground_map = mapData["ground"];
+                n_boxes = randomInt(1, 10);
+                boxes = [];
+                for (let i = 0; i < n_boxes; i++) {
+                    let x = randomInt(0, 6);
+                    let y = randomInt(0, 11);
+                    console.log(x, y)
+                    console.log(ground_map[y][x])
+                    if (ground_map[y][x] != 0) {
+                        const imageBox = new Image();
+                        imageBox.src = '/assets/box.png';
+                        x = x * 64 + 20;
+                        y = y * 80;
+                        const width = 64;
+                        const height = 64;
+                        imageBox.onload = () => {
+                            context.drawImage(imageBox, x, y, width, height);
+                        };
+                        boxes.push({
+                            "height": 64,
+                            "id": 3,
+                            "name": "Box",
+                            "width": 64,
+                            "x": x,
+                            "y": y
+                        });
+                    }
+                }
+                // Guardar Boxes
+                mapData["boxes"] = boxes;
+             } else {
+                // Dibujar boxes
+                boxes = mapData["boxes"];
+                boxes.forEach((box) => {
+                    const imageBox = new Image();
+                    imageBox.src = '/assets/box.png';
+                    const x = box.x;
+                    const y = box.y;
+                    const width = box.width;
+                    const height = box.height;
+                    imageBox.onload = () => {
+                        context.drawImage(imageBox, x, y, width, height);
+                    };
+                });
+            }
+
+        }
+
+        function checkIfThereAreBoxes() {
+            // Check if player is on a box
+            
+            player_x = mapData.objects[0].x;
+            player_y = mapData.objects[0].y;
+            boxes = mapData["boxes"];
+            boxes.forEach((box) => {
+                box_x = box.x;
+                box_y = box.y;
+                if (player_x == box_x && player_y == box_y) {
+                    console.log("player on box");
+                }
+            });
+        }
+
+        // Función para dibujar una imagen
+        function drawImage(image) {
+            context.drawImage(image, 0, 0, 483, 966);
+        }
+
+        checkCollisions = () => {
+            // Revisa si el jugador colisiona con algún objeto del mapa
+            console.log("checkCollisions");
+            
+            if (mapData.collitions[posY][posX] != 0) {
+                console.log("colision");
+            }
+        }
+        checkIfWin = () => {
+            // Revisa si el jugador ha ganado usando la posicion del jugador y la posicion del objeto Goal
+            console.log("checkIfWin");
+            if (posX() == Math.round(mapData.objects[1].x / 64) && posY() == Math.round(mapData.objects[1].y / 64)) {
+                console.log("win");
+                document.getElementById("congratz").style.display = 'flex';
+            }
+
+        }
+
+        var posX = () => { return Math.round(mapData.objects[0].x / 64)} ;
+        var posY = () => { return Math.round((mapData.objects[0].y) / 64) -1} ;
+
+        const moveAstronaut = {
+            // Mueve al astronauta
+            left: async () => {
+                // mover lentamente hasta alcanzar 64 pixeles
+                if (mapData.collitions[posY()][posX()-1] == 0) {
+                    for (let i = 0; i < 64; i++) {
+                        mapData.objects[0].x -= 1;
+                        await sleep(10);
+                        reDraw();
+                    }
+                    checkIfWin();
+                } else {
+                  throw "Error ... al intentar mover el astronauta con parametro 'left' se encontró un obstaculo"
+                }
+                
+            },
+            right: async () => {
+                if (mapData.collitions[posY()][posX()+1] == 0) {
+                    for (let i = 0; i < 64; i++) {
+                        mapData.objects[0].x += 1;
+                        await sleep(10);
+                        reDraw();
+                        
+                    }
+                    checkIfWin();
+                } else {
+                  throw "Error ... al intentar mover el astronauta con parametro 'right' se encontró un obstaculo"
+                }
+            },
+            up: async () => {
+              if (mapData.collitions[posY()-1][posX()] == 0) {
+                for (let i = 0; i < 80; i++) {
+                  if (mapData.objects[0].y >= 10) {
+                      mapData.objects[0].y -= 1;
+                      await sleep(10);
+                      console.log(mapData.objects[0].y)
+                      reDraw();
+                    } else {
+                      throw "Error ... se intentó mover el astronauta fuera del mapa"
+                      break;
+                    } 
+                  } 
+                  checkIfWin();
+              } else {
+                // raise error
+                throw "Error ... al intentar mover el astronauta con parametro 'up' se encontró un obstaculo"
+              }
+            
+                
+            },
+            down: async () => {
+                if (mapData.collitions[posY()+1][posX()] == 0) {
+                    for (let i = 0; i < 80; i++) {
+                        mapData.objects[0].y += 1;
+                        await sleep(10);
+                        reDraw();
+                    }
+                    checkIfWin();
+                } else {
+                  throw "Error ... al intentar mover el astronauta con parametro 'down' se encontró un obstaculo"
+                }
+                // mover lentamente hasta alcanzar 64 pixeles
+                console.log("down");
+            },
+        }
+
+        async function move(direction) {
+            // Mueve al astronauta en la dirección indicada
+            try {
+              await moveAstronaut[direction]();
+            } catch (error) {
+              console.log("no se puede mover");
+                const debugConsole = document.getElementById('debug-console');
+                // Append a new node to the debug console
+                const newNode = document.createElement('p');
+                newNode.innerHTML = error;
+                debugConsole.appendChild(newNode);
+            }
+            
+            
+        }
+
+        init();
+
+        </script>
+
+        <script>
+
+            function beautifyCode() {
+                const code = document.getElementById('generated-code').innerText;
+                const beautifiedCode = js_beautify(code, {
+                    indent_size: 2, // Puedes ajustar la cantidad de indentación
+                    space_in_empty_paren: true,
+                    preserve_newlines: true,
+                });
+                document.getElementById('generated-code').innerText = beautifiedCode;
+            }
+
+            function myUpdateFunction(event) {
+                var code = Blockly.JavaScript.workspaceToCode(workspace);
+                document.getElementById('generated-code').innerText = code;
+                
+                beautifyCode(); 
+            }
+
+            workspace.addChangeListener(myUpdateFunction);
+
+            function play() {
+                mapData.objects[0].x = 195;
+                mapData.objects[0].y = 705;
+                code = (document.getElementById('generated-code').innerText);
+                full_code = "async function play_game() {" + code + "}; play_game();";
+                console.log(full_code);
+                eval(full_code);
+            }
+        </script>
+
+<% end %>
+

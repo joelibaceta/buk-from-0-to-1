@@ -1,4 +1,4 @@
-ActiveAdmin.register Player do
+ActiveAdmin.register Challenge do
 
 
 end

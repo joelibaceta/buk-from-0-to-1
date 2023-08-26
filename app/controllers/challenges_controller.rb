@@ -5,8 +5,11 @@ class ChallengesController < ApplicationController
 
     def show
         # create challenge if it doesn't exist
-        @challenge = Challenge.find_or_create_by(id: params[:id])
-        return @challenge
+        @challenge = Challenge.find_or_create_by(code: params[:id])
+        
+        @map = @challenge.map
+        
+        @c = "hi"
     end
 
     def new

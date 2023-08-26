@@ -7,13 +7,25 @@
     <%= csp_meta_tag %>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/blockly/theme-dark.js"></script>
+    <script src="
+https://cdn.jsdelivr.net/npm/@blockly/theme-dark@4.0.7/dist/index.min.js
+"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.13.5/js/lib/beautify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.13.5/js/lib/beautify-html.js"></script>
+<!-- lodash.debounce library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
     <main class="flex h-screen">
-    <div class="w-1/5 bg-gray-200 p-8">
+    <div class="w-1/5 bg-blue-800 p-8 text-white">
       <!-- Instrucciones -->
       <%= yield :instructions %>
     </div>
