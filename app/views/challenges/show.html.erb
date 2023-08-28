@@ -60,12 +60,20 @@
             <div class="text-2xl font-semibold mb-4">¡Felicidades, has ganado!</div>
             <div class="text-4xl mb-6">🎉</div>
             <p>Gracias por jugar.</p>
+
+            <ul id="positions">
+            </ul>
         </div>
     </div>
 
     <%= render "toolbox" %>
 
     <script>
+
+        
+
+        var score = 1000;
+        
         const canvas = document.getElementById('gameCanvas');
         const context = canvas.getContext('2d');
 
@@ -74,9 +82,12 @@
         const tileSize = 16;
 
         const resources = {};  
+        var initialX = 0;
+        var initialY = 0;
 
         const imagePaths = [
-            '/assets/map2.png'
+            '<%= raw @map.map_url %>'
+            //'/assets/map2.png'
             // Agrega más rutas de imágenes aquí si es necesario
         ];
 
@@ -131,6 +142,11 @@
             const width = mapData.objects[0].width;
             const height = mapData.objects[0].height;
 
+            if (initialX == 0 && initialY == 0) {
+                initialX = x;
+                initialY = y;
+            }
+
             imagePlayer.onload = () => {
                 context.drawImage(imagePlayer, x, y, width, height);
             };
@@ -145,7 +161,7 @@
                 // Dibuja las cajas en posiciones aleatorias en ubicaciones disponibles marcadas por Ground
                 const randomInt = (max, min) => Math.round(Math.random() * (max - min)) + min;
                 ground_map = mapData["ground"];
-                n_boxes = randomInt(1, 10);
+                n_boxes = randomInt(5, 10);
                 boxes = [];
                 for (let i = 0; i < n_boxes; i++) {
                     let x = randomInt(0, 6);
@@ -215,14 +231,62 @@
                 console.log("colision");
             }
         }
+        evaluateCodeQuality = (code) => {
+          const eslint = new window.ESLint();
+          const results = eslint.lintText(code);
+
+          return results;
+        }
+        calcCodeScore = () => {
+            // Calcula una metrica calidad del código
+            let code = document.getElementById('generated-code').innerText;
+            let codeLength = code.length;
+            let codeQualityData = evaluateCodeQuality(code);
+            let codeQualityScore = 1000 - codeLength * 10;
+            codeQualityScore -= codeQualityData[0].errorCount * 50;
+            codeQualityScore -= codeQualityData[0].warningCount * 10;
+            return codeQualityScore;
+        }
+
         checkIfWin = () => {
             // Revisa si el jugador ha ganado usando la posicion del jugador y la posicion del objeto Goal
             console.log("checkIfWin");
             if (posX() == Math.round(mapData.objects[1].x / 64) && posY() == Math.round(mapData.objects[1].y / 64)) {
+
+                let username = prompt("¿Cual es tu nombre?");
+
+                db.collection("scores/<%= @challenge.code %>/today").add({
+                    "username": username,
+                    "score": score
+                }).then((docRef) => {
+                    console.log("Document created with id: " + docRef.id)
+                }).catch((error)=>{
+                    console.log("Error: " + error)
+                });
+
+                db.collection("scores/<%= @challenge.code %>/today")
+                    .orderBy("score", "desc") // Ordenar por el campo "score" en orden descendente
+                    .limit(10) // Obtener solo los 10 primeros documentos
+                    .onSnapshot((querySnapshot) => {
+                    let li_str = "";
+                    querySnapshot.forEach((doc) => {
+                        let task = doc.data()
+                        console.log(doc.data());
+                        li_str += "<li>"
+                        li_str += task.username + " - ";
+                        li_str += task.score + "</li>";
+                    })
+                    
+                    document.getElementById("positions").innerHTML = li_str;
+                })
+
+                
+
                 console.log("win");
                 document.getElementById("congratz").style.display = 'flex';
             }
 
+            
         }
 
         var posX = () => { return Math.round(mapData.objects[0].x / 64)} ;
@@ -299,12 +363,13 @@
             try {
               await moveAstronaut[direction]();
             } catch (error) {
+              score -= 10;
               console.log("no se puede mover");
-                const debugConsole = document.getElementById('debug-console');
-                // Append a new node to the debug console
-                const newNode = document.createElement('p');
-                newNode.innerHTML = error;
-                debugConsole.appendChild(newNode);
+              const debugConsole = document.getElementById('debug-console');
+              // Append a new node to the debug console
+              const newNode = document.createElement('p');
+              newNode.innerHTML = error;
+              debugConsole.appendChild(newNode);
             }
             
             
@@ -319,6 +384,7 @@
                 // Eliminar box 
                 return box_content
             } else {
+              score -= 10;
               const debugConsole = document.getElementById('debug-console');
               // Append a new node to the debug console
               const newNode = document.createElement('p');
@@ -340,13 +406,14 @@
             // Dibujar
             reDraw();
             if (box_content == "food") {
-                // Aumentar vida
+                score += 100;
+                // Aumentar puntos
                 const newNode = document.createElement('p');
                 newNode.className = "text-green-500";
                 newNode.innerHTML = "Wow ... el astronauta encontró comida, era lo que necesitaba";
                 debugConsole.appendChild(newNode);
-                throw "Error ... oh no ... el astronauta comió veneno";
             } else {
+                score -= 100;
                 const newNode = document.createElement('p');
                 newNode.innerHTML = "Error ... oh no ... el astronauta comió veneno";
                 debugConsole.appendChild(newNode);
@@ -356,7 +423,7 @@
 
         init();
 
-        </script>
+      </script>
 
         <script>
 
@@ -383,8 +450,8 @@
                 // clean debug console
                 const debugConsole = document.getElementById('debug-console');
                 debugConsole.innerHTML = "";
-                mapData.objects[0].x = 195;
-                mapData.objects[0].y = 705;
+                mapData.objects[0].x = initialX;
+                mapData.objects[0].y = initialY;
                 code = (document.getElementById('generated-code').innerText);
                 full_code = "async function play_game() {" + code + "}; play_game();";
                 console.log(full_code);

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_21_015725) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_28_113032) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_015725) do
     t.integer "challenge_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "map_url"
     t.index ["challenge_id"], name: "index_maps_on_challenge_id"
   end
 
