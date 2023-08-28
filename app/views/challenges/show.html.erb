@@ -143,8 +143,8 @@
             const height = mapData.objects[0].height;
 
             if (initialX == 0 && initialY == 0) {
-                initialX = x;
-                initialY = y;
+                initialX = mapData.objects[0].x;
+                initialY = mapData.objects[0].y;
             }
 
             imagePlayer.onload = () => {
@@ -165,7 +165,7 @@
                 boxes = [];
                 for (let i = 0; i < n_boxes; i++) {
                     let x = randomInt(0, 6);
-                    let y = randomInt(0, 11);
+                    let y = randomInt(1, 11);
                     if (ground_map[y][x] != 0) {
                         const imageBox = new Image();
                         imageBox.src = '/assets/box.png';
@@ -289,8 +289,8 @@
             
         }
 
-        var posX = () => { return Math.round(mapData.objects[0].x / 64)} ;
-        var posY = () => { return Math.round((mapData.objects[0].y) / 64) -1} ;
+        var posX = () => { return Math.floor(mapData.objects[0].x / 64) } ;
+        var posY = () => { return Math.floor((mapData.objects[0].y) / 64) -1} ;
 
         const moveAstronaut = {
             // Mueve al astronauta
@@ -299,6 +299,7 @@
                 if (mapData.collitions[posY()][posX()-1] == 0) {
                     for (let i = 0; i < 64; i++) {
                         mapData.objects[0].x -= 1;
+                        console.log(mapData.objects[0].x)
                         await sleep(10);
                         reDraw();
                     }
@@ -309,9 +310,14 @@
                 
             },
             right: async () => {
+
+                console.log(mapData.collitions[posY()][posX()+1])
                 if (mapData.collitions[posY()][posX()+1] == 0) {
                     for (let i = 0; i < 64; i++) {
                         mapData.objects[0].x += 1;
+                        console.log(posX())
+                        console.log(posY())
+                        console.log(mapData.objects[0].x)
                         await sleep(10);
                         reDraw();
                         
@@ -322,6 +328,9 @@
                 }
             },
             up: async () => {
+              console.log(mapData.collitions[posY()-1][posX()])
+              console.log(posX())
+              console.log(posY())
               if (mapData.collitions[posY()-1][posX()] == 0) {
                 for (let i = 0; i < 80; i++) {
                   if (mapData.objects[0].y >= 10) {
@@ -364,6 +373,7 @@
               await moveAstronaut[direction]();
             } catch (error) {
               score -= 10;
+              console.log(error)
               console.log("no se puede mover");
               const debugConsole = document.getElementById('debug-console');
               // Append a new node to the debug console

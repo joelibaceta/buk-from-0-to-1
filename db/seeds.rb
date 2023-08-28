@@ -68,45 +68,106 @@
 # map = Map.create(name: "Map 1", data: map1_data.to_json, challenge_id: first_challenge.id)
 
 
-second_challenge = Challenge.new(
-    id: 2,
+# second_challenge = Challenge.new(
+#     id: 2,
+#     code: "second",
+#     title: "Challenge 2",
+#     intro: "En este emocionante primer reto, te convertirás en el controlador de vuelo del intrépido astronauta mientras se desplaza por una avanzada plataforma espacial y supera obstáculos cósmicos.",
+#     premise: "Con los recursos agotándose, tu misión es explorar la plataforma en busca de alimentos esenciales para sobrevivir. Pero no debes dejar que la desesperacion te haga tomar decisiones apresuradas. Algunas de las sustancias que encuentres podrían ser tóxicas. ",
+#     tasks: "¿Podrás tomar decisiones estratégicas y usar tu ingenio para elegir las cajas correctas y mantener al astronauta a salvo mientras luchas por tu supervivencia en el espacio profundo?",
+#     notes: ""
+# )
+# second_challenge.save
+
+# map2_data = {
+#     :collitions=>[
+#         [200, 201, 201, 201, 201, 202,   0],
+#         [230,   0,   0,   0,   0, 232,   0],
+#         [225,   0,   0,   0,   0, 232,   0],
+#         [225,   0,   0,   0,   0, 232,   0],
+#         [225,   0,   0,   0,   0, 260, 202],
+#         [225,   0,   0,   0,   0,   0, 232],
+#         [225,   0,   0,   0,   0, 200, 262],
+#         [225,   0,   0,   0,   0, 232,   0],
+#         [225,   0,   0,   0,   0, 225,   0],
+#         [225,   0,   0,   0,   0, 225,   0],
+#         [225,   0,   0,   0,   0, 225,   0],
+#         [251, 201, 201, 201, 201, 253,   0]
+#     ],
+#     :ground=>[
+#         [  0,   0,   0,   0,   0,   0,   0],
+#         [  0, 304, 304, 304, 304,   0,   0],
+#         [  0, 304, 304, 304, 304,   0,   0],
+#         [  0, 305, 305, 304, 305,   0,   0],
+#         [  0, 305, 305, 304, 304,   0,   0],
+#         [  0, 304, 304, 304, 304, 431,   0],
+#         [  0, 304, 304, 304, 304,   0,   0],
+#         [  0, 304, 304, 304, 304,   0,   0],
+#         [  0, 305, 304, 304, 304,   0,   0],
+#         [  0, 305, 304, 304, 304,   0,   0],
+#         [  0, 305, 304, 304, 304,   0,   0],
+#         [  0,   0,   0,   0,   0,   0,   0]
+#     ],
+#     :boxes=>[],
+#     :objects=>[
+#         {
+#             :height=>60, 
+#             :id=>1, 
+#             :name=>"Player", 
+#             :width=>60, :x=>64, :y=>640
+#         }, 
+#         {
+#             :height=>60.2112328496694, 
+#             :id=>2,
+#             :name=>"Goal", 
+#             :width=>58.237094067713, :x=>320, :y=>320
+#         }
+#     ]
+# }
+
+# map = Map.create(name: "Map 1", data: map2_data.to_json, challenge_id: 2)
+
+
+third_challenge = Challenge.new(
+    id: 3,
     code: "second",
-    title: "Challenge 2",
-    intro: "En este emocionante primer reto, te convertirás en el controlador de vuelo del intrépido astronauta mientras se desplaza por una avanzada plataforma espacial y supera obstáculos cósmicos.",
-    premise: "Con los recursos agotándose, tu misión es explorar la plataforma en busca de alimentos esenciales para sobrevivir. Pero no debes dejar que la desesperacion te haga tomar decisiones apresuradas. Algunas de las sustancias que encuentres podrían ser tóxicas. ",
-    tasks: "¿Podrás tomar decisiones estratégicas y usar tu ingenio para elegir las cajas correctas y mantener al astronauta a salvo mientras luchas por tu supervivencia en el espacio profundo?",
+    title: "Final Challenge",
+    intro: "Eres el último astronauta en una estación espacial a la deriva, ahora deberás utilizar tus habilidades de movimiento y cálculo al máximo para sobrevivir.",
+    premise: "La clave para el éxito radica en la simplicidad. Con las comunicaciones casi interrumpidas, deberás usar la menor cantidad de instrucciones posible para garantizar una misión sin contratiempos. Utiliza tus habilidades y lo aprendido para trazar la ruta más efectiva y asegurarte de que la misión se complete sin interrupciones.",
+    tasks: "¡La supervivencia del astronauta y la recolección de alimentos ahora dependen de tu destreza.",
     notes: ""
 )
-second_challenge.save
+third_challenge.save
 
-map2_data = {
-    :collitions=>[
-        [200, 201, 201, 201, 201, 202,   0],
-        [230,   0,   0,   0,   0, 232,   0],
-        [225,   0,   0,   0,   0, 232,   0],
-        [225,   0,   0,   0,   0, 232,   0],
-        [225,   0,   0,   0,   0, 260, 202],
-        [225,   0,   0,   0,   0,   0, 232],
-        [225,   0,   0,   0,   0, 200, 262],
-        [225,   0,   0,   0,   0, 232,   0],
-        [225,   0,   0,   0,   0, 225,   0],
-        [225,   0,   0,   0,   0, 225,   0],
-        [225,   0,   0,   0,   0, 225,   0],
-        [251, 201, 201, 201, 201, 253,   0]
+
+map3_data = {
+    :collitions=>[    
+        [  0,   0, 257, 193,   0,   0,   0],
+        [  0,   0,   0, 251, 193,   0,   0],
+        [257, 193,   0,   0, 251, 193,   0],
+        [  0, 251, 193,   0,   0, 251, 193],
+        [248, 189, 251, 193,   0,   0, 225],
+        [  0, 248, 190, 225,   0,   0, 225],
+        [  0, 248, 190, 225,   0,   0, 225],
+        [248, 189, 191, 253,   0,   0, 225],
+        [  0, 191, 253,   0,   0, 191, 253],
+        [257, 253,   0,   0, 191, 253,   0],
+        [  0,   0,   0, 191, 253,   0,   0],
+        [  0,   0, 257, 253,   0,   0,   0]
     ],
-    :ground=>[
-        [  0,   0,   0,   0,   0,   0,   0],
-        [  0, 304, 304, 304, 304,   0,   0],
-        [  0, 304, 304, 304, 304,   0,   0],
-        [  0, 305, 305, 304, 305,   0,   0],
-        [  0, 305, 305, 304, 304,   0,   0],
-        [  0, 304, 304, 304, 304, 431,   0],
-        [  0, 304, 304, 304, 304,   0,   0],
-        [  0, 304, 304, 304, 304,   0,   0],
-        [  0, 305, 304, 304, 304,   0,   0],
-        [  0, 305, 304, 304, 304,   0,   0],
-        [  0, 305, 304, 304, 304,   0,   0],
-        [  0,   0,   0,   0,   0,   0,   0]
+    :ground=>[    
+        [304, 304,   0,   0,   0,   0,   0],
+        [304, 304, 304,   0,   0,   0,   0],
+        [  0,   0, 304, 304,   0,   0,   0],
+        [  0,   0,   0, 304, 304,   0,   0],
+        [  0,   0,   0,   0, 304, 304,   0],
+        [  0,   0,   0,   0, 304, 304,   0],
+        [  0,   0,   0,   0, 304, 304,   0],
+        [  0,   0,   0,   0, 304, 304,   0],
+        [  0,   0,   0, 304, 304,   0,   0],
+        [  0,   0, 304, 304,   0,   0,   0],
+        [304, 304, 304,   0,   0,   0,   0],
+        [304, 304,   0,   0,   0,   0,   0]
     ],
     :boxes=>[],
     :objects=>[
@@ -114,15 +175,15 @@ map2_data = {
             :height=>60, 
             :id=>1, 
             :name=>"Player", 
-            :width=>60, :x=>64, :y=>640
+            :width=>60, :x=>5, :y=>780
         }, 
         {
             :height=>60.2112328496694, 
             :id=>2,
             :name=>"Goal", 
-            :width=>58.237094067713, :x=>320, :y=>320
+            :width=>58.237094067713, :x=>5, :y=>5
         }
     ]
 }
 
-map = Map.create(name: "Map 1", data: map2_data.to_json, challenge_id: 2)
+map = Map.create(name: "Map 3", data: map3_data.to_json, challenge_id: 3)
