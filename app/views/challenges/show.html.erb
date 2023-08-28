@@ -15,7 +15,7 @@
     <div id=editor_"<%= dom_id @challenge %>" class="flex flex-col">
         <div id="blocklyDiv"
             class="h-full w-full"
-            style="height: 60vh; width: 40vw;">
+            style="height: 50vh; width: 40vw;">
             <a id="play-button"
                 class="bg-blue-500 text-white rounded-full p-4 shadow-md absolute bottom-4 right-4">
                 <svg class="h-6 w-6 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,9 +23,11 @@
                 </svg>
             </a>
         </div>
-        <pre id="code-container" class="p-8"><code id="generated-code" class="javascript language-javascript"></code></pre>
-        <div class="p-8 text-red bg-black" style="color: red; overflow: vertical;" id="debug-console">
+        <div class="flex flex-col" style="height: 50vh; align-items: stretch;">
+          <pre id="code-container" class="bg-white p-8 text-sm"  style="height: 50%; font-family: monospace;"><code id="generated-code" class="javascript language-javascript"></code></pre>
+          <div class="p-8 text-red bg-black" style="color: red; overflow-y: auto; height: 50%;" id="debug-console"></div>
         </div>
+        
     </div>
 <% end %>
 
@@ -148,8 +150,6 @@
                 for (let i = 0; i < n_boxes; i++) {
                     let x = randomInt(0, 6);
                     let y = randomInt(0, 11);
-                    console.log(x, y)
-                    console.log(ground_map[y][x])
                     if (ground_map[y][x] != 0) {
                         const imageBox = new Image();
                         imageBox.src = '/assets/box.png';
@@ -160,11 +160,14 @@
                         imageBox.onload = () => {
                             context.drawImage(imageBox, x, y, width, height);
                         };
+                        let randomValue = Math.random();
+                        let randomContent = randomValue < 0.5 ? "food" : "poison";
                         boxes.push({
                             "height": 64,
                             "id": 3,
                             "name": "Box",
                             "width": 64,
+                            "content": randomContent, // random between feed and poison
                             "x": x,
                             "y": y
                         });
@@ -190,19 +193,13 @@
 
         }
 
-        function checkIfThereAreBoxes() {
-            // Check if player is on a box
-            
-            player_x = mapData.objects[0].x;
-            player_y = mapData.objects[0].y;
-            boxes = mapData["boxes"];
-            boxes.forEach((box) => {
-                box_x = box.x;
-                box_y = box.y;
-                if (player_x == box_x && player_y == box_y) {
-                    console.log("player on box");
-                }
-            });
+        function isBoxAtPlayerPosition() {
+            box = mapData["boxes"].find(box => box.x > mapData.objects[0].x && box.x < mapData.objects[0].x + 64 && box.y > mapData.objects[0].y && box.y < mapData.objects[0].y + 64);
+            if (box) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // Función para dibujar una imagen
@@ -313,6 +310,50 @@
             
         }
 
+        function open_box() {
+            // Abre la caja en la que se encuentra el jugador
+            box = mapData["boxes"].find(box => box.x > mapData.objects[0].x && box.x < mapData.objects[0].x + 64 && box.y > mapData.objects[0].y && box.y < mapData.objects[0].y + 64);
+            console.log(mapData["boxes"])
+            if (box) {
+                box_content = box["content"];
+                // Eliminar box 
+                return box_content
+            } else {
+              const debugConsole = document.getElementById('debug-console');
+              // Append a new node to the debug console
+              const newNode = document.createElement('p');
+              newNode.innerHTML = "Error ... no se puede abrir la caja porque no hay ninguna en la posición actual";
+              debugConsole.appendChild(newNode);
+              throw "Error ... no se puede abrir la caja porque no hay ninguna en la posición actual"
+            }
+        }
+
+        
+
+        async function eat() {
+            const debugConsole = document.getElementById('debug-console');
+            // Come el contenido de la caja en la que se encuentra el jugador
+            box = mapData["boxes"].find(box => box.x > mapData.objects[0].x && box.x < mapData.objects[0].x + 64 && box.y > mapData.objects[0].y && box.y < mapData.objects[0].y + 64);
+            box_content = box["content"];
+            // eliminar box
+            mapData["boxes"] = mapData["boxes"].filter(box => box.x != mapData.objects[0].x && box.y != mapData.objects[0].y);
+            // Dibujar
+            reDraw();
+            if (box_content == "food") {
+                // Aumentar vida
+                const newNode = document.createElement('p');
+                newNode.className = "text-green-500";
+                newNode.innerHTML = "Wow ... el astronauta encontró comida, era lo que necesitaba";
+                debugConsole.appendChild(newNode);
+                throw "Error ... oh no ... el astronauta comió veneno";
+            } else {
+                const newNode = document.createElement('p');
+                newNode.innerHTML = "Error ... oh no ... el astronauta comió veneno";
+                debugConsole.appendChild(newNode);
+                throw "Error ... oh no ... el astronauta comió veneno";
+            }
+        }
+
         init();
 
         </script>
@@ -339,6 +380,9 @@
             workspace.addChangeListener(myUpdateFunction);
 
             function play() {
+                // clean debug console
+                const debugConsole = document.getElementById('debug-console');
+                debugConsole.innerHTML = "";
                 mapData.objects[0].x = 195;
                 mapData.objects[0].y = 705;
                 code = (document.getElementById('generated-code').innerText);

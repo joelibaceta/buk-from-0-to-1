@@ -46,6 +46,13 @@
           </shadow>
         </value>
       </block>
+      <block type="text_print">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
     </category>
     <category id="catMath" colour="230" name="Math">
         <block type="math_number"></block>
@@ -146,6 +153,7 @@
     <category colour="330" name="Actions">
         <block type="move_block"></block> 
         <block type="open_box"></block>
+        <block type="is_box_at_player_position"></block>
         <block type="eat"></block>
     </category> 
     
@@ -196,11 +204,22 @@
         }
     };
 
+    Blockly.Blocks["is_box_at_player_position"] = {
+        init: function() {
+            this.appendDummyInput()
+                .appendField("is_box_at_player_position")
+            this.setOutput(true, 'Boolean');
+            this.setColour(330);
+        this.setTooltip("is box at player position");
+        this.setHelpUrl("");
+        }
+    };
+
     Blockly.JavaScript['move_block'] = function(block) {
         return "await move('" + block.getFieldValue('direction') + "'); ";
     };
     Blockly.JavaScript['open_box'] = function(block) {
-        return ["open_box()", Blockly.JavaScript.ORDER_NONE];
+        return ["open_box()", Blockly.JavaScript.ORDER_MEMBER];
     };
     Blockly.JavaScript['eat'] = function(block) {
         return "eat()";
